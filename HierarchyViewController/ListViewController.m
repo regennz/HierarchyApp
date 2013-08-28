@@ -8,6 +8,7 @@
 
 #import "ListViewController.h"
 #import "HierarchyViewController.h"
+#import "AppDelegate_Phone.h"
 
 @implementation ListViewController
 
@@ -128,6 +129,48 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refreshControl;
+    [refreshControl release];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLockerUpdated) name:kLockerUpdatedNotification object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (!self.isRefreshable) {
+        [self.refreshControl removeFromSuperview];
+        self.refreshControl = nil;
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (self.isRefreshable) {
+        AppDelegate_Phone *appDelegate = (AppDelegate_Phone *)[UIApplication sharedApplication].delegate;
+        if (appDelegate.downloadingLocker) {
+            [self beginRefreshing];
+        }
+    }
+}
+
+- (void)beginRefreshing {
+    [self.refreshControl beginRefreshing];
+    if (self.tableView.contentOffset.y == 0) {
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
+            self.tableView.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
+        } completion:nil];
+    }
+}
+
+- (void)refreshList {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kLockerRefreshNotification object:nil];
+}
+
+- (void)onLockerUpdated {
+    [self.refreshControl endRefreshing];
 }
 
 /*
@@ -433,6 +476,8 @@
     // For example: self.myOutlet = nil;
     self.viewLoaded = NO;
     self.searchController = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kLockerUpdatedNotification object:nil];
 }
 
 
@@ -443,6 +488,7 @@
     self.hierarchyController = nil;
     self.displayFilter = nil;
     self.searchController = nil;
+    self.refreshControl = nil;
 
     [super dealloc];
 }

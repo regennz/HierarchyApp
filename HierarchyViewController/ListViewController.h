@@ -33,6 +33,7 @@
 @property (nonatomic, retain) HierarchyViewController *hierarchyController;
 @property (nonatomic, retain) NSDictionary *displayFilter;
 @property (nonatomic, assign) BOOL ignoreRightButton;
+@property (nonatomic, readonly) BOOL isRefreshable;
 
 +(ListViewController*)viewControllerDisplaying:(NSDictionary*)displayFilter data:(NSArray*)data;
 
