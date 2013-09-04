@@ -134,7 +134,8 @@
     [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = refreshControl;
     [refreshControl release];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onLockerUpdated) name:kLockerUpdatedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginRefreshing) name:kRefreshStartNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshing) name:kRefreshStopNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -152,11 +153,14 @@
         AppDelegate_Phone *appDelegate = (AppDelegate_Phone *)[UIApplication sharedApplication].delegate;
         if (appDelegate.downloadingLocker) {
             [self beginRefreshing];
+        } else {
+            [self endRefreshing];
         }
     }
 }
 
 - (void)beginRefreshing {
+    if (self.refreshControl.isRefreshing) return;
     [self.refreshControl beginRefreshing];
     if (self.tableView.contentOffset.y == 0) {
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
@@ -165,12 +169,12 @@
     }
 }
 
-- (void)refreshList {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kLockerRefreshNotification object:nil];
+- (void)endRefreshing {
+    [self.refreshControl endRefreshing];
 }
 
-- (void)onLockerUpdated {
-    [self.refreshControl endRefreshing];
+- (void)refreshList {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshStartedNotification object:nil];
 }
 
 /*
@@ -477,7 +481,8 @@
     self.viewLoaded = NO;
     self.searchController = nil;
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kLockerUpdatedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kRefreshStartNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kRefreshStopNotification object:nil];
 }
 
 
