@@ -98,6 +98,20 @@
     return YES;
 }
 
+- (void)updateEditButtonTitle {
+    if (self.editing) {
+        self.editButtonItem.title = NSLocalizedString(@"CANCEL", @"Cancel");
+    }
+    else {
+        self.editButtonItem.title = NSLocalizedString(@"EDIT", @"Edit");
+    }
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+    [super setEditing:editing animated:animated];
+    [self updateEditButtonTitle];
+}
+
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -140,6 +154,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [self updateEditButtonTitle];
     
     if (!self.isRefreshable) {
         [self.refreshControl removeFromSuperview];
@@ -354,6 +370,10 @@
     return UITableViewCellEditingStyleNone;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NSLocalizedString(@"DELETE", @"Delete");
+}
+
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -497,7 +517,6 @@
 
     [super dealloc];
 }
-
 
 @end
 
