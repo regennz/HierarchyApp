@@ -629,7 +629,7 @@
     NSArray *filters = [self.filtersdata objectForKey:@"filters"];
     NSDictionary *itemDescription = [self.appdata objectForKey:@"itemData"];
     NSMutableArray *itemResults = [NSMutableArray arrayWithCapacity:[searchData count]];
-    NSMutableDictionary *filterResults = [NSMutableArray arrayWithCapacity:[filters count]];
+    NSMutableArray *filterResults = [NSMutableArray arrayWithCapacity:[filters count]];
     
     
     NSDictionary *itemData;

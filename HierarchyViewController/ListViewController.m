@@ -10,6 +10,11 @@
 #import "HierarchyViewController.h"
 #import "AppDelegate_Phone.h"
 
+#define kRefreshStartedNotification @"kRefreshStartedNotification"
+#define kRefreshStartNotification @"kRefreshStartNotification"
+#define kRefreshStopNotification @"kRefreshStopNotification"
+
+
 @implementation ListViewController
 
 @synthesize tableData = _tableData;
