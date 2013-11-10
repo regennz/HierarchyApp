@@ -149,12 +149,14 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-    [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
-    self.refreshControl = refreshControl;
-    [refreshControl release];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginRefreshing) name:kRefreshStartNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshing) name:kRefreshStopNotification object:nil];
+    if ([self respondsToSelector:@selector(refreshControl)]){
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
+        self.refreshControl = refreshControl;
+        [refreshControl release];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginRefreshing) name:kRefreshStartNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshing) name:kRefreshStopNotification object:nil];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -162,20 +164,24 @@
     
     [self updateEditButtonTitle];
     
-    if (!self.isRefreshable) {
-        [self.refreshControl removeFromSuperview];
-        self.refreshControl = nil;
+    if ([self respondsToSelector:@selector(refreshControl)]){
+        if (!self.isRefreshable) {
+            [self.refreshControl removeFromSuperview];
+            self.refreshControl = nil;
+        }
     }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if (self.isRefreshable) {
-        AppDelegate_Phone *appDelegate = (AppDelegate_Phone *)[UIApplication sharedApplication].delegate;
-        if (appDelegate.downloadingLocker) {
-            [self beginRefreshing];
-        } else {
-            [self endRefreshing];
+    if ([self respondsToSelector:@selector(refreshControl)]){
+        if (self.isRefreshable) {
+            AppDelegate_Phone *appDelegate = (AppDelegate_Phone *)[UIApplication sharedApplication].delegate;
+            if (appDelegate.downloadingLocker) {
+                [self beginRefreshing];
+            } else {
+                [self endRefreshing];
+            }
         }
     }
 }
