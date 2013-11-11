@@ -71,7 +71,12 @@
                 [s setCharactersToBeSkipped:
                  [NSCharacterSet characterSetWithCharactersInString:@"\n, "]];
                 if ([s scanFloat:&red] && [s scanFloat:&green] && [s scanFloat:&blue] && [s scanFloat:&alpha] ) {
-                    self.tintColor = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+                    
+                    if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]){
+                        // do nothing?
+                    } else {
+                        self.tintColor = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+                    }
                 }
             }
             
