@@ -524,7 +524,9 @@
     self.hierarchyController = nil;
     self.displayFilter = nil;
     self.searchController = nil;
-    self.refreshControl = nil;
+    if ([self respondsToSelector:@selector(refreshControl)]){
+        self.refreshControl = nil;
+    }
 
     [super dealloc];
 }
