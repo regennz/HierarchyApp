@@ -150,9 +150,13 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     if ([self respondsToSelector:@selector(refreshControl)]){
+    	
+    	_isRefreshable = YES; //dirty hack to get the views to default to pull to refresh.
+
         UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
         [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
         self.refreshControl = refreshControl;
+        [self.tableView addSubview:self.refreshControl];
         [refreshControl release];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginRefreshing) name:kRefreshStartNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshing) name:kRefreshStopNotification object:nil];
@@ -202,6 +206,10 @@
 
 - (void)refreshList {
     [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshStartedNotification object:nil];
+    //calls the delegate method to reload the tracks
+    if ([[[UIApplication sharedApplication]delegate]respondsToSelector:@selector(downloadLockerTracks)]) {
+        [(AppDelegate_Phone *)[[UIApplication sharedApplication] delegate] downloadLockerTracks];
+    }
 }
 
 /*
