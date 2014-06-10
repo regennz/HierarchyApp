@@ -545,7 +545,6 @@
         self.refreshControl = nil;
     }
 
-    [super dealloc];
 }
 
 @end
