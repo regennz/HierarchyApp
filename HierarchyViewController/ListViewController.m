@@ -123,6 +123,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(endRefreshing) name:@"ENDREFRESHINGNOTIFICATION" object:nil];
+    
     self.tableView.sectionIndexMinimumDisplayRowCount = self.hierarchyController.sectionIndexMinimumDisplayRowCount;
     self.viewLoaded = YES;
     NSDictionary *appFeatures = [self.hierarchyController.appdata objectForKey:@"features"];
@@ -538,10 +540,12 @@
     self.hierarchyController = nil;
     self.displayFilter = nil;
     self.searchController = nil;
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"ENDREFRESHINGNOTIFICATION" object:nil];
     if ([self respondsToSelector:@selector(refreshControl)]){
         self.refreshControl = nil;
     }
 
+    [super dealloc];
 }
 
 @end
