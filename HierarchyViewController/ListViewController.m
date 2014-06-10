@@ -44,7 +44,7 @@
     }
     
     ListViewController *viewController = [[cellViewClass alloc] initDisplaying:displayFilter data:data];
-    return [viewController autorelease];
+    return viewController;
 }
 
 -(id) initDisplaying:(NSDictionary*)displayFilter data:(NSArray*)data {
@@ -127,7 +127,7 @@
     self.viewLoaded = YES;
     NSDictionary *appFeatures = [self.hierarchyController.appdata objectForKey:@"features"];
     if (appFeatures && [[appFeatures objectForKey:@"searchSupported"] isEqualToString:@"YES"] ) {
-        UISearchBar *searchBar = [[[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)] autorelease];
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
         searchBar.scopeButtonTitles = [NSArray arrayWithObjects:@"Using filters", @"All entries", nil];
         self.tableView.tableHeaderView = searchBar;
         
@@ -139,7 +139,6 @@
         searchDisplayController.searchResultsDelegate = self;
         searchDisplayController.searchResultsDataSource = self;
         self.searchController = searchDisplayController;
-        [searchDisplayController release]; searchDisplayController = nil;
     }
     // Uncomment the following line to preserve selection between presentations.
     //self.clearsSelectionOnViewWillAppear = NO;
@@ -157,7 +156,6 @@
         [refreshControl addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
         self.refreshControl = refreshControl;
         [self.tableView addSubview:self.refreshControl];
-        [refreshControl release];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginRefreshing) name:kRefreshStartNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefreshing) name:kRefreshStopNotification object:nil];
     }
@@ -201,7 +199,15 @@
 }
 
 - (void)endRefreshing {
-    [self.refreshControl endRefreshing];
+    
+    // call endRefreshing on main thread
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(endRefreshing) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    if (self.refreshControl.isRefreshing){
+        [self.refreshControl endRefreshing];
+    }
 }
 
 - (void)refreshList {
@@ -349,7 +355,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
@@ -536,7 +542,6 @@
         self.refreshControl = nil;
     }
 
-    [super dealloc];
 }
 
 @end
