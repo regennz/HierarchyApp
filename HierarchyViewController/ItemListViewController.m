@@ -27,7 +27,7 @@
     }
 
     ItemListViewController *viewController = [[cellViewClass alloc] initDisplaying:itemDesc data:data];
-    return [viewController autorelease];
+    return viewController;
 }
 
 -(id) initDisplaying:(NSDictionary*)itemData data:(NSArray*)data {
@@ -41,9 +41,7 @@
 }
 
 -(BOOL)updateData:(NSArray*)data {
-    NSArray *sortedData = [data sortedArrayUsingDescriptors:
-                  [NSArray arrayWithObject:[[[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES selector:@selector(caseInsensitiveCompare:)] autorelease]]
-                  ];
+    NSArray *sortedData = [data sortedArrayUsingDescriptors: [NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
         
     UILocalizedIndexedCollation *theCollation = [UILocalizedIndexedCollation currentCollation];
     NSMutableArray *collationData = [NSMutableArray arrayWithCapacity:30];
@@ -196,7 +194,7 @@
     
     ItemListTableViewCell *cell = (ItemListTableViewCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[cellViewClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[cellViewClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
     }
     
     // Configure the cell...
@@ -363,10 +361,6 @@
     // For example: self.myOutlet = nil;
 }
 
-
-- (void)dealloc {
-    [super dealloc];
-}
 
 
 @end

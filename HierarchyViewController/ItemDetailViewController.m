@@ -19,7 +19,7 @@
 
 -(id) initWithItem:(NSDictionary*)itemData {
     if ((self = [super initWithStyle:UITableViewStylePlain])) {
-        self.itemData = [itemData retain];
+        self.itemData = itemData;
         self.title = [self.itemData objectForKey:@"title"];
     }
     return self;
@@ -117,9 +117,9 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         if ([indexPath indexAtPosition:0] == 0) {        
-            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         } else {
-            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:CellIdentifier] autorelease];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:CellIdentifier];
         }
     }
     
@@ -233,7 +233,6 @@
 - (void)dealloc {
     self.itemData = nil;
     self.hierarchyController = nil;
-    [super dealloc];
 }
 
 
